@@ -16,7 +16,7 @@ func Detections() *schema.Table {
 	return &schema.Table{
 		Name:      "crowdstrike_falcon_detections",
 		Resolver:  fetchDetections,
-		Transform: transformers.TransformWithStruct(&models.DomainAPIDetectionDocument{}),
+		Transform: transformers.TransformWithStruct(&models.DomainAPIDetectionDocument{}, transformers.WithPrimaryKeys("DetectionID")),
 	}
 }
 

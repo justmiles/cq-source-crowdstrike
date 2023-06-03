@@ -2,7 +2,7 @@
 
 This table shows data for Crowdstrike Falcon Detections.
 
-The primary key for this table is **_cq_id**.
+The primary key for this table is **detection_id**.
 
 ## Columns
 
@@ -10,7 +10,7 @@ The primary key for this table is **_cq_id**.
 | ------------- | ------------- |
 |_cq_source_name|`utf8`|
 |_cq_sync_time|`timestamp[us, tz=UTC]`|
-|_cq_id (PK)|`uuid`|
+|_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |adversary_ids|`list<item: int64, nullable>`|
 |assigned_to_name|`utf8`|
@@ -19,7 +19,7 @@ The primary key for this table is **_cq_id**.
 |behaviors_processed|`list<item: utf8, nullable>`|
 |cid|`utf8`|
 |created_timestamp|`json`|
-|detection_id|`utf8`|
+|detection_id (PK)|`utf8`|
 |device|`json`|
 |email_sent|`bool`|
 |first_behavior|`json`|

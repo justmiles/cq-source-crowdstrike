@@ -7,6 +7,7 @@ A crowdstrike source plugin for CloudQuery Falcon that loads data from crowdstri
 - Detections – Extracts details for Falcon detections, including behavior, severity, host, timestamps, and more.
 - Hosts – Extracts host details including OS, version, sensor specific data, and more.
 - Incidents - Extracts incidents and their details
+- Vulnerabilities - Extracts vulnerabilities and their details
 
 ## Configuration
 
@@ -35,6 +36,7 @@ spec:
 - [crowdstrike_falcon_detections](./docs/tables/crowdstrike_falcon_detections.md)
 - [crowdstrike_falcon_hosts](./docs/tables/crowdstrike_falcon_hosts.md)
 - [crowdstrike_falcon_incidents](./docs/tables/crowdstrike_falcon_incidents.md)
+- [crowdstrike_falcon_vulnerabilities](./docs/tables/crowdstrike_falcon_vulnerabilities.md)
 
 ## Development
 

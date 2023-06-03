@@ -2,7 +2,7 @@
 
 This table shows data for Crowdstrike Falcon Hosts.
 
-The primary key for this table is **_cq_id**.
+The primary key for this table is **device_id**.
 
 ## Columns
 
@@ -10,7 +10,7 @@ The primary key for this table is **_cq_id**.
 | ------------- | ------------- |
 |_cq_source_name|`utf8`|
 |_cq_sync_time|`timestamp[us, tz=UTC]`|
-|_cq_id (PK)|`uuid`|
+|_cq_id|`uuid`|
 |_cq_parent_id|`uuid`|
 |agent_load_flags|`utf8`|
 |agent_local_time|`utf8`|
@@ -24,7 +24,7 @@ The primary key for this table is **_cq_id**.
 |config_id_platform|`utf8`|
 |cpu_signature|`utf8`|
 |detection_suppression_status|`utf8`|
-|device_id|`utf8`|
+|device_id (PK)|`utf8`|
 |device_policies|`json`|
 |email|`utf8`|
 |external_ip|`utf8`|

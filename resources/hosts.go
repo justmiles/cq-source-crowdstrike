@@ -16,17 +16,16 @@ func Hosts() *schema.Table {
 	return &schema.Table{
 		Name:      "crowdstrike_falcon_hosts",
 		Resolver:  fetchHosts,
-		Transform: transformers.TransformWithStruct(&models.DeviceapiDeviceSwagger{}),
+		Transform: transformers.TransformWithStruct(&models.DeviceapiDeviceSwagger{}, transformers.WithPrimaryKeys("DeviceID")),
 	}
 }
 
 func fetchHosts(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	c := meta.(*client.Client)
 
-	var more = true
 	var offset int64 = 0
 	var limit int64 = 100
-	for more {
+	for {
 
 		queryRespOK, err := c.CrowdStrike.Hosts.QueryDevicesByFilter(&hosts.QueryDevicesByFilterParams{
 			Context: ctx,
@@ -43,10 +42,6 @@ func fetchHosts(ctx context.Context, meta schema.ClientMeta, parent *schema.Reso
 			}
 		}
 
-		offset += limit
-		if *queryResponse.Meta.Pagination.Total == int64(*queryResponse.Meta.Pagination.Offset) {
-			more = false
-		}
 		detailsOK, err := c.CrowdStrike.Hosts.GetDeviceDetailsV2(&hosts.GetDeviceDetailsV2Params{
 			Context: ctx,
 			Ids:     queryResponse.Resources,
@@ -58,6 +53,11 @@ func fetchHosts(ctx context.Context, meta schema.ClientMeta, parent *schema.Reso
 			res <- host
 		}
 
+		offset += limit
+
+		if *queryResponse.Meta.Pagination.Total == int64(*queryResponse.Meta.Pagination.Offset) {
+			break
+		}
 	}
 
 	return nil

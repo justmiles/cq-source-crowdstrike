@@ -20,6 +20,7 @@ func Plugin() *source.Plugin {
 			resources.Incidents(),
 			resources.Detections(),
 			resources.Hosts(),
+			resources.Vulnerabilities(),
 		},
 		client.New,
 	)

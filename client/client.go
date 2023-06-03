@@ -36,6 +36,7 @@ func New(ctx context.Context, logger zerolog.Logger, s specs.Source, opts source
 	c, err := falcon.NewClient(&falcon.ApiConfig{
 		ClientId:     falconClientID,
 		ClientSecret: falconSecret,
+		Debug:        false,
 		Context:      context.Background(),
 	})
 	if err != nil {

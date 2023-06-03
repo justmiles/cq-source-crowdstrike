@@ -16,7 +16,7 @@ func Incidents() *schema.Table {
 	return &schema.Table{
 		Name:      "crowdstrike_falcon_incidents",
 		Resolver:  fetchIncidents,
-		Transform: transformers.TransformWithStruct(&models.DomainIncident{}),
+		Transform: transformers.TransformWithStruct(&models.DomainIncident{}, transformers.WithPrimaryKeys("IncidentID")),
 	}
 }
 
