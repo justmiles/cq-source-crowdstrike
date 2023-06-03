@@ -3,12 +3,11 @@ package resources
 import (
 	"context"
 	"fmt"
-	"os"
+
+	"github.com/justmiles/cq-source-crowdstrike/client"
 
 	"github.com/cloudquery/plugin-sdk/v3/schema"
 	"github.com/cloudquery/plugin-sdk/v3/transformers"
-
-	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/incidents"
 	"github.com/crowdstrike/gofalcon/falcon/models"
 )
@@ -22,21 +21,9 @@ func Incidents() *schema.Table {
 }
 
 func fetchIncidents(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	// client := meta.(*Client)
+	c := meta.(*client.Client)
 
-	falconClientID := os.Getenv("FALCON_CLIENT_ID")
-	falconSecret := os.Getenv("FALCON_SECRET")
-
-	client, err := falcon.NewClient(&falcon.ApiConfig{
-		ClientId:     falconClientID,
-		ClientSecret: falconSecret,
-		Context:      context.Background(),
-	})
-	if err != nil {
-		return fmt.Errorf("could not auth: %s", err.Error())
-	}
-
-	queryIncidentsOK, err := client.Incidents.QueryIncidents(&incidents.QueryIncidentsParams{
+	queryIncidentsOK, err := c.CrowdStrike.Incidents.QueryIncidents(&incidents.QueryIncidentsParams{
 		Context: context.Background(),
 	})
 	if err != nil {
@@ -50,7 +37,7 @@ func fetchIncidents(ctx context.Context, meta schema.ClientMeta, parent *schema.
 		}
 	}
 
-	getIncidentsOK, err := client.Incidents.GetIncidents(&incidents.GetIncidentsParams{
+	getIncidentsOK, err := c.CrowdStrike.Incidents.GetIncidents(&incidents.GetIncidentsParams{
 		Context: context.Background(),
 		Body: &models.MsaIdsRequest{
 			Ids: ids,

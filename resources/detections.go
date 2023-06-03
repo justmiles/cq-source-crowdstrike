@@ -3,12 +3,11 @@ package resources
 import (
 	"context"
 	"fmt"
-	"os"
+
+	"github.com/justmiles/cq-source-crowdstrike/client"
 
 	"github.com/cloudquery/plugin-sdk/v3/schema"
 	"github.com/cloudquery/plugin-sdk/v3/transformers"
-
-	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/detects"
 	"github.com/crowdstrike/gofalcon/falcon/models"
 )
@@ -22,21 +21,9 @@ func Detections() *schema.Table {
 }
 
 func fetchDetections(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-	// client := meta.(*Client)
+	c := meta.(*client.Client)
 
-	falconClientID := os.Getenv("FALCON_CLIENT_ID")
-	falconSecret := os.Getenv("FALCON_SECRET")
-
-	client, err := falcon.NewClient(&falcon.ApiConfig{
-		ClientId:     falconClientID,
-		ClientSecret: falconSecret,
-		Context:      context.Background(),
-	})
-	if err != nil {
-		return fmt.Errorf("could not auth: %s", err.Error())
-	}
-
-	queryOK, err := client.Detects.QueryDetects(&detects.QueryDetectsParams{
+	queryOK, err := c.CrowdStrike.Detects.QueryDetects(&detects.QueryDetectsParams{
 		Context: context.Background(),
 	})
 	if err != nil {
@@ -44,7 +31,7 @@ func fetchDetections(ctx context.Context, meta schema.ClientMeta, parent *schema
 	}
 	queryResponse := queryOK.GetPayload()
 
-	detectionOK, err := client.Detects.GetDetectSummaries(&detects.GetDetectSummariesParams{
+	detectionOK, err := c.CrowdStrike.Detects.GetDetectSummaries(&detects.GetDetectSummariesParams{
 		Context: context.Background(),
 		Body: &models.MsaIdsRequest{
 			Ids: queryResponse.Resources,
