@@ -28,3 +28,4 @@ config.yaml
 db.sql
 cloudquery.log
 postgres.yaml
+.envrc
