@@ -27,7 +27,7 @@ func fetchDetections(ctx context.Context, meta schema.ClientMeta, parent *schema
 		Context: context.Background(),
 	})
 	if err != nil {
-		return fmt.Errorf("could not get incident: %s", err.Error())
+		return fmt.Errorf("could not query detects: %s", err.Error())
 	}
 	queryResponse := queryOK.GetPayload()
 
@@ -37,6 +37,9 @@ func fetchDetections(ctx context.Context, meta schema.ClientMeta, parent *schema
 			Ids: queryResponse.Resources,
 		},
 	})
+	if err != nil {
+		return fmt.Errorf("could not get detects: %s", err.Error())
+	}
 
 	detectionResponse := detectionOK.GetPayload()
 

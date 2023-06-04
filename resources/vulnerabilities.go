@@ -34,7 +34,7 @@ func fetchVulnerabilities(ctx context.Context, meta schema.ClientMeta, parent *s
 			Filter:  "status:'open'",
 		})
 		if err != nil {
-			return fmt.Errorf("could not get incident: %s", err.Error())
+			return fmt.Errorf("could not get vulnerabilities: %s", err.Error())
 		}
 		if err = falcon.AssertNoError(queryRespOK.Payload.Errors); err != nil {
 			return fmt.Errorf(falcon.ErrorExplain(err))

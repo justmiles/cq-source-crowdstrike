@@ -38,7 +38,7 @@ func fetchHosts(ctx context.Context, meta schema.ClientMeta, parent *schema.Reso
 		queryResponse := queryRespOK.GetPayload()
 		for _, msaAPIError := range queryResponse.Errors {
 			if msaAPIError.Message != nil {
-				return fmt.Errorf("error QueryDevicesByFilter: %s", *msaAPIError.Message)
+				return fmt.Errorf("could not query hosts: %s", *msaAPIError.Message)
 			}
 		}
 
@@ -46,6 +46,9 @@ func fetchHosts(ctx context.Context, meta schema.ClientMeta, parent *schema.Reso
 			Context: ctx,
 			Ids:     queryResponse.Resources,
 		})
+		if err != nil {
+			return fmt.Errorf("could not get hosts: %s", err.Error())
+		}
 
 		detailsResponse := detailsOK.GetPayload()
 

@@ -27,7 +27,7 @@ func fetchIncidents(ctx context.Context, meta schema.ClientMeta, parent *schema.
 		Context: context.Background(),
 	})
 	if err != nil {
-		return fmt.Errorf("could not get incident: %s", err.Error())
+		return fmt.Errorf("could not query incident: %s", err.Error())
 	}
 	queryResponse := queryIncidentsOK.GetPayload()
 	var ids []string
@@ -43,6 +43,9 @@ func fetchIncidents(ctx context.Context, meta schema.ClientMeta, parent *schema.
 			Ids: ids,
 		},
 	})
+	if err != nil {
+		return fmt.Errorf("could not get incidents: %s", err.Error())
+	}
 
 	incidentResponse := getIncidentsOK.GetPayload()
 
