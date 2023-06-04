@@ -1,5 +1,7 @@
 # CloudQuery CrowdStrike Falcon Source Plugin
 
+[![release](https://github.com/justmiles/cq-source-crowdstrike/actions/workflows/release.yaml/badge.svg)](https://github.com/justmiles/cq-source-crowdstrike/actions/workflows/release.yaml) [![test](https://github.com/justmiles/cq-source-crowdstrike/actions/workflows/test.yaml/badge.svg)](https://github.com/justmiles/cq-source-crowdstrike/actions/workflows/test.yaml)
+
 A crowdstrike source plugin for CloudQuery Falcon that loads data from crowdstrike to any database, data warehouse or data lake supported by [CloudQuery](https://www.cloudquery.io/), such as PostgreSQL, BigQuery, Athena, and many more.
 
 ## Features
