@@ -13,6 +13,45 @@ A crowdstrike source plugin for CloudQuery Falcon that loads data from crowdstri
 
 ## Configuration
 
+Export the following environment variables to configure CrowdStrike:
+
+- FALCON_CLIENT_ID - Falcon ClientID
+- FALCON_SECRET - Falcon Secret
+
+To obtain an OAuth2 API Client navigate to the [CrowdStrike Falcon / API clients and keys](https://falcon.crowdstrike.com/api-clients-and-keys/clients) portal.
+
+CloudQuery should only have _read_ access to CrowdStrike resources. The intent is to index all resources in CrowdStrike, so all scopes should be accessible, but read-only.
+
+- Alerts
+- Custom IOA rules
+- Detections
+- Hosts
+- Falcon Discover
+- Falcon Complete Dashboard
+- Actors (Falcon Intelligence)
+- Reports (Falcon Intelligence)
+- Host groups
+- Incidents
+- Installation Tokens
+- IOC Management
+- IOCs (Indicators of Compromise)
+- Message Center for Overwatch
+- Message Center
+- Machine Learning Exclusions
+- On-demand scans (ODS)
+- OverWatch Dashboard
+- Prevention policies
+- Quarantined Files
+- Real time response (admin)
+- Real time responseResponse policies
+- Scheduled ReportsIOA Exclusions
+- Sensor DownloadSensor update policies
+- Sensor Visibility Exclusions
+- Spotlight vulnerabilities
+- Event streams
+- User management
+- Zero Trust Assessment
+
 ### Example
 
 ```yaml
