@@ -64,12 +64,6 @@ spec:
   version: "v0.0.0"
   destinations: ["sqlite"]
   tables: ["*"]
-  spec:
-    auth:
-      strategy: "ondemand"
-      creds:
-        siteUrl: ${SP_SITE_URL}
-        # align creds with the used strategy
 ```
 
 ## Tables
