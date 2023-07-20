@@ -21,23 +21,103 @@ func DiscoverApps() *schema.Table {
 	}
 }
 
+func getHostIds(ctx context.Context, meta schema.ClientMeta, filter string) <-chan []string {
+	c := meta.(*client.Client)
+	hostIds := make(chan []string)
+
+	go func() {
+		limit := int64(100)
+		for offset := int64(0); ; {
+			response, err := c.CrowdStrike.Discover.QueryHosts(&discover.QueryHostsParams{
+				Context: ctx,
+				Limit:   &limit,
+				Offset:  &offset,
+				Filter:  &filter,
+			})
+			if err != nil {
+				panic(falcon.ErrorExplain(err))
+			}
+			if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+				panic(err)
+			}
+
+			hosts := response.Payload.Resources
+			if len(hosts) == 0 {
+				break
+			}
+			hostIds <- hosts
+			offset = offset + int64(len(hosts))
+			if offset >= *response.Payload.Meta.Pagination.Total {
+				break
+			}
+		}
+		close(hostIds)
+	}()
+	return hostIds
+}
+
+func getAppIds(ctx context.Context, meta schema.ClientMeta, hostIds []string) <-chan []string {
+	c := meta.(*client.Client)
+	
+	appIds := make(chan []string)
+
+	for _, hostID := range hostIds {
+		go func() {
+			filter := "hostid:'" + hostID + "'"
+			limit := int64(100)
+			for offset := int64(0); ; {
+				response, err := c.CrowdStrike.Discover.QueryApplications(&discover.QueryApplicationsParams{
+					Context: ctx,
+					Limit:   &limit,
+					Offset:  &offset,
+					Filter:  &filter,
+				})
+				if err != nil {
+					panic(falcon.ErrorExplain(err))
+				}
+				if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+					panic(err)
+				}
+
+				apps := response.Payload.Resources
+				if len(apps) == 0 {
+					break
+				}
+				appIds <- apps
+				offset = offset + int64(len(apps))
+				if offset >= *response.Payload.Meta.Pagination.Total {
+					break
+				}
+			}
+		}()
+		close(appIds)
+	}
+	return appIds
+}
+
 func fetchDiscoverApps(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	c := meta.(*client.Client)
+	hostFilter := "entity_type:'managed'"
 
-	response, err := c.CrowdStrike.Discover.GetApplications(&discover.GetApplicationsParams{
-		Context: ctx,
-	})
-	if err != nil {
-		return fmt.Errorf("could not get Applications: %s", falcon.ErrorExplain(err))
-	}
-	if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
-		return fmt.Errorf("could not get Applications: %s", err.Error())
-	}
-
-	apps := response.Payload.Resources
-	if len(apps) > 0 {
-		for _, app := range apps {
-			res <- app
+	for hostIDbatch := range getHostIds(ctx, meta, hostFilter) {
+		for appIDsbatch := range getAppIds(ctx, meta, hostIDbatch) {
+			response, err := c.CrowdStrike.Discover.GetApplications(&discover.GetApplicationsParams{
+				Context: ctx,
+				Ids: appIDsbatch,
+			})
+			if err != nil {
+				return fmt.Errorf("could not get Applications: %s", falcon.ErrorExplain(err))
+			}
+			if err = falcon.AssertNoError(response.Payload.Errors); err != nil {
+				return fmt.Errorf("could not get Applications: %s", err.Error())
+			}
+		
+			apps := response.Payload.Resources
+			if len(apps) > 0 {
+				for _, app := range apps {
+					res <- app
+				}
+			}
 		}
 	}
 

@@ -24,7 +24,7 @@ func DiscoverHosts() *schema.Table {
 func fetchDiscoverHosts(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
 	c := meta.(*client.Client)
 	limit := int64(100)
-	filter := ""
+	filter := "entity_type:'managed'"
 
 	for offset := int64(0); ; {
 		response, err := c.CrowdStrike.Discover.QueryHosts(&discover.QueryHostsParams{
