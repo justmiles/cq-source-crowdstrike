@@ -63,7 +63,7 @@ func getAppIds(ctx context.Context, meta schema.ClientMeta, hostIds []string) <-
 
 	for _, hostID := range hostIds {
 		go func() {
-			filter := "hostid:'" + hostID + "'"
+			filter := "host.id:'" + hostID + "'"
 			limit := int64(100)
 			for offset := int64(0); ; {
 				response, err := c.CrowdStrike.Discover.QueryApplications(&discover.QueryApplicationsParams{
