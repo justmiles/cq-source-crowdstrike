@@ -31,7 +31,7 @@ func fetchVulnerabilities(ctx context.Context, meta schema.ClientMeta, parent *s
 			Context: ctx,
 			Facet:   []string{"cve", "host_info", "remediation"},
 			After:   lastSeen,
-			Filter:  "status:'open'",
+			Filter:  "created_timestamp:>'2000-01-01T01:00:00Z'", // a filter is required so generous lookback
 		})
 		if err != nil {
 			return fmt.Errorf("could not get vulnerabilities: %s", err.Error())
