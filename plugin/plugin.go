@@ -21,6 +21,8 @@ func Plugin() *source.Plugin {
 			resources.Detections(),
 			resources.Hosts(),
 			resources.Vulnerabilities(),
+			resources.DiscoverApps(),
+			resources.DiscoverHosts(),
 		},
 		client.New,
 	)
