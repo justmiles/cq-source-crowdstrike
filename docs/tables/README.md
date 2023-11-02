@@ -1,4 +1,4 @@
-# Source Plugin: justmiles-crowdstrike
+# Source Plugin: crowdstrike
 
 ## Tables
 
