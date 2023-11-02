@@ -19,9 +19,7 @@ gen-docs: build
 
 .PHONY: dist
 dist:
-	cp -vf README.md docs/overview.md
-	sed -i.bak -E 's#(\./|/)?docs/tables/crowdstrike_(.+)\.md#/plugins/source/justmiles/crowdstrike/tables/crowdstrike_\2#g' docs/overview.md
-	rm -f docs/overview.md.bak
+	sed -E 's#(\./|/)?docs/tables/crowdstrike_(.+)\.md#/plugins/source/justmiles/crowdstrike/tables/crowdstrike_\2#g' README.md > docs/overview.md
 	go run main.go package -m "Release ${VERSION}" ${VERSION} .
 
 .PHONY: lint
