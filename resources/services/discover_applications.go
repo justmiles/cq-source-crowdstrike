@@ -1,4 +1,4 @@
-package resources
+package services
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/justmiles/cq-source-crowdstrike/client"
 
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/discover"
 	"github.com/crowdstrike/gofalcon/falcon/models"
@@ -60,7 +60,7 @@ func getAppIds(ctx context.Context, meta schema.ClientMeta, hostID string) <-cha
 	c := meta.(*client.Client)
 	//var appIds []string
 	appIds := make(chan []string)
-	
+
 	go func() {
 		filter := "host.id:'" + hostID + "'"
 		limit := int64(100)
@@ -108,10 +108,10 @@ func fetchDiscoverApps(ctx context.Context, meta schema.ClientMeta, parent *sche
 					if end > len(appIDsbatch) {
 						end = len(appIDsbatch)
 					}
-					
+
 					response, err := c.CrowdStrike.Discover.GetApplications(&discover.GetApplicationsParams{
 						Context: ctx,
-						Ids: appIDsbatch[i:end],
+						Ids:     appIDsbatch[i:end],
 					})
 					if err != nil {
 						return fmt.Errorf("could not get Applications: %s", falcon.ErrorExplain(err))

@@ -1,11 +1,16 @@
 package main
 
 import (
-	"github.com/justmiles/cq-source-crowdstrike/plugin"
+	"context"
+	"log"
 
-	"github.com/cloudquery/plugin-sdk/v3/serve"
+	"github.com/cloudquery/plugin-sdk/v4/serve"
+	"github.com/justmiles/cq-source-crowdstrike/resources/plugin"
 )
 
 func main() {
-	serve.Source(plugin.Plugin())
+	p := serve.Plugin(plugin.Plugin())
+	if err := p.Serve(context.Background()); err != nil {
+		log.Fatalf("failed to serve plugin: %v", err)
+	}
 }

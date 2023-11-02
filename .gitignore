@@ -19,13 +19,16 @@
 .DS_Store
 
 cq-source-crowdstrike
+docs/overview.md
 
 dist
 *.logdb.sql
 config.yaml
 .cq
 .vscode
+.idea
 db.sql
+cloudquery
 cloudquery.log
 postgres.yaml
 .envrc

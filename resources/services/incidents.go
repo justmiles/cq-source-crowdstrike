@@ -1,4 +1,4 @@
-package resources
+package services
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/justmiles/cq-source-crowdstrike/client"
 
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/crowdstrike/gofalcon/falcon/client/incidents"
 	"github.com/crowdstrike/gofalcon/falcon/models"
 )
@@ -24,7 +24,7 @@ func fetchIncidents(ctx context.Context, meta schema.ClientMeta, parent *schema.
 	c := meta.(*client.Client)
 
 	queryIncidentsOK, err := c.CrowdStrike.Incidents.QueryIncidents(&incidents.QueryIncidentsParams{
-		Context: context.Background(),
+		Context: ctx,
 	})
 	if err != nil {
 		return fmt.Errorf("could not query incident: %s", err.Error())
@@ -38,7 +38,7 @@ func fetchIncidents(ctx context.Context, meta schema.ClientMeta, parent *schema.
 	}
 
 	getIncidentsOK, err := c.CrowdStrike.Incidents.GetIncidents(&incidents.GetIncidentsParams{
-		Context: context.Background(),
+		Context: ctx,
 		Body: &models.MsaIdsRequest{
 			Ids: ids,
 		},

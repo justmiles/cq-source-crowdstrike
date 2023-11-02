@@ -64,9 +64,20 @@ spec:
   registry: "github"
   path: "justmiles/crowdstrike"
   version: "v0.0.0"
+  # use this to enable incremental syncing - unimplemented
+  # backend_options:
+  #   table_name: "cq_state_crowdstrike"
+  #   connection: "@@plugins.DESTINATION_NAME.connection"
   destinations: ["sqlite"]
   tables: ["*"]
+  spec:
+    # plugin spec section
 ```
+
+### Plugin Spec
+
+- `concurrency` (int, optional, default: `1000`):
+  Best effort maximum number of Go routines to use. Lower this number to reduce memory usage.
 
 ## Tables
 
@@ -96,3 +107,31 @@ make lint
 ```bash
 make gen-docs
 ```
+
+### Release a new version
+
+1. Run `git tag v1.0.0` to create a new tag for the release (replace `v1.0.0` with the new version number)
+2. Run `git push origin v1.0.0` to push the tag to GitHub
+
+Once the tag is pushed, a new GitHub Actions workflow will be triggered to build the release binaries and create the new release on GitHub.
+To customize the release notes, see the Go releaser [changelog configuration docs](https://goreleaser.com/customization/changelog/#changelog).
+
+### Publish a new version to the Cloudquery Hub
+
+After tagging a release, you can build and publish a new version to the [Cloudquery Hub](https://hub.cloudquery.io/) by running the following commands.
+Replace `v1.0.0` with the new version number.
+
+```bash
+# Use the README as main documentation
+cp README.md docs/overview.md
+# -m parameter adds release notes message, output is created in dist/ directory
+go run main.go package -m "Release v1.0.0" v1.0.0 .
+
+# Login to cloudquery hub and publish the new version
+cloudquery login
+cloudquery plugin publish --finalize
+```
+
+After publishing the new version, it will show up in the [hub](https://hub.cloudquery.io/).
+
+For more information please refer to the official [Publishing a Plugin to the Hub](https://www.cloudquery.io/docs/developers/publishing-a-plugin-to-the-hub) guide.
