@@ -17,6 +17,13 @@ gen-docs: build
 	cloudquery tables --format markdown --output-dir docs/ test/config.yml
 	mv -vf docs/crowdstrike docs/tables
 
+.PHONY: dist
+dist:
+	cp -vf README.md docs/overview.md
+	sed -i.bak -E 's#(\./|/)?docs/tables/crowdstrike_(.+)\.md#/plugins/source/justmiles/crowdstrike/tables/crowdstrike_\2#g' docs/overview.md
+	rm -f docs/overview.md.bak
+	go run main.go package -m "Release ${VERSION}" ${VERSION} .
+
 .PHONY: lint
 lint:
 	@golangci-lint run --timeout 10m --verbose

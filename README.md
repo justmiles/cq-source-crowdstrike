@@ -122,10 +122,8 @@ After tagging a release, you can build and publish a new version to the [Cloudqu
 Replace `v1.0.0` with the new version number.
 
 ```bash
-# Use the README as main documentation
-cp README.md docs/overview.md
-# -m parameter adds release notes message, output is created in dist/ directory
-go run main.go package -m "Release v1.0.0" v1.0.0 .
+# "make dist" uses the README as main documentation and adds a generic release note. Output is created in dist/
+VERSION=v1.0.0 make dist
 
 # Login to cloudquery hub and publish the new version
 cloudquery login
