@@ -1,0 +1,8 @@
+run:
+  tests: true
+  skip-dirs:
+    - bin
+    - docs
+  timeout: 10m
+  build-tags:
+    - all

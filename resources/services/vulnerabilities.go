@@ -26,7 +26,6 @@ func fetchVulnerabilities(ctx context.Context, meta schema.ClientMeta, parent *s
 
 	lastSeen := (*string)(nil)
 	for {
-
 		queryRespOK, err := c.CrowdStrike.SpotlightVulnerabilities.CombinedQueryVulnerabilities(&spotlight_vulnerabilities.CombinedQueryVulnerabilitiesParams{
 			Context: ctx,
 			Facet:   []string{"cve", "host_info", "remediation"},

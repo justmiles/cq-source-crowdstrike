@@ -33,7 +33,7 @@ func fetchIncidents(ctx context.Context, meta schema.ClientMeta, parent *schema.
 	var ids []string
 	for _, id := range queryResponse.Resources {
 		if idstr, ok := id.(string); ok {
-			ids = append(ids, string(idstr))
+			ids = append(ids, idstr)
 		}
 	}
 
