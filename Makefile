@@ -19,7 +19,6 @@ gen-docs: build
 
 .PHONY: dist
 dist:
-	sed -E 's#(\./|/)?docs/tables/crowdstrike_(.+)\.md#/plugins/source/justmiles/crowdstrike/tables/crowdstrike_\2#g' README.md > docs/overview.md
 	go run main.go package -m "Release ${VERSION}" ${VERSION} .
 
 .PHONY: lint
