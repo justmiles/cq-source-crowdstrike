@@ -59,7 +59,7 @@ spec:
   name: "crowdstrike"
   registry: "cloudquery
   path: "justmiles/crowdstrike"
-  version: "VERSION_SOURCE_CROWDSTRIKE"
+  version: "v2.0.0"
   # use this to enable incremental syncing - unimplemented
   # backend_options:
   #   table_name: "cq_state_crowdstrike"
