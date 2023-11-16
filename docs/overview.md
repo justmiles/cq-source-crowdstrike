@@ -57,7 +57,7 @@ CloudQuery should only have _read_ access to CrowdStrike resources. The intent i
 kind: source
 spec:
   name: "crowdstrike"
-  registry: "cloudquery
+  registry: "cloudquery"
   path: "justmiles/crowdstrike"
   version: "v2.0.0"
   # use this to enable incremental syncing - unimplemented
