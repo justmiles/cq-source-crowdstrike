@@ -14,7 +14,6 @@ import (
 	"github.com/cloudquery/plugin-sdk/v4/state"
 	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/crowdstrike/gofalcon/falcon"
-	falconClient "github.com/crowdstrike/gofalcon/falcon/client"
 	"github.com/justmiles/cq-source-crowdstrike/client"
 	"github.com/justmiles/cq-source-crowdstrike/resources/services"
 	"github.com/rs/zerolog"
@@ -33,7 +32,6 @@ type Client struct {
 	options     plugin.NewClientOptions
 	scheduler   *scheduler.Scheduler
 	backendConn *grpc.ClientConn
-	services    *falconClient.CrowdStrikeAPISpecification
 
 	plugin.UnimplementedDestination
 }
@@ -71,7 +69,20 @@ func (c *Client) Sync(ctx context.Context, options plugin.SyncOptions, res chan<
 		c.logger.Info().Str("table_name", options.BackendOptions.TableName).Msg("Connected to state backend")
 	}
 
-	schedulerClient := client.New(c.logger, c.config, c.services, stateClient)
+	falconClientID := os.Getenv("FALCON_CLIENT_ID")
+	falconSecret := os.Getenv("FALCON_SECRET")
+
+	fc, err := falcon.NewClient(&falcon.ApiConfig{
+		ClientId:     falconClientID,
+		ClientSecret: falconSecret,
+		Debug:        false,
+		Context:      ctx,
+	})
+	if err != nil {
+		return fmt.Errorf("could not auth: %w", err)
+	}
+
+	schedulerClient := client.New(c.logger, c.config, fc, stateClient)
 	err = c.scheduler.Sync(ctx, schedulerClient, tt, res, scheduler.WithSyncDeterministicCQID(options.DeterministicCQID))
 	if err != nil {
 		return fmt.Errorf("failed to sync: %w", err)
@@ -94,7 +105,7 @@ func (c *Client) Close(_ context.Context) error {
 	return nil
 }
 
-func Configure(ctx context.Context, logger zerolog.Logger, specBytes []byte, opts plugin.NewClientOptions) (plugin.Client, error) {
+func Configure(_ context.Context, logger zerolog.Logger, specBytes []byte, opts plugin.NewClientOptions) (plugin.Client, error) {
 	if opts.NoConnection {
 		return &Client{
 			logger:  logger.With().Str("module", "crowdstrike").Logger(),
@@ -112,19 +123,6 @@ func Configure(ctx context.Context, logger zerolog.Logger, specBytes []byte, opt
 		return nil, fmt.Errorf("failed to validate spec: %w", err)
 	}
 
-	falconClientID := os.Getenv("FALCON_CLIENT_ID")
-	falconSecret := os.Getenv("FALCON_SECRET")
-
-	fc, err := falcon.NewClient(&falcon.ApiConfig{
-		ClientId:     falconClientID,
-		ClientSecret: falconSecret,
-		Debug:        false,
-		Context:      ctx,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("could not auth: %w", err)
-	}
-
 	return &Client{
 		logger:  logger.With().Str("module", "crowdstrike").Logger(),
 		options: opts,
@@ -133,8 +131,7 @@ func Configure(ctx context.Context, logger zerolog.Logger, specBytes []byte, opt
 			scheduler.WithLogger(logger),
 			scheduler.WithConcurrency(config.Concurrency),
 		),
-		services: fc,
-		tables:   getTables(),
+		tables: getTables(),
 	}, nil
 }
 
