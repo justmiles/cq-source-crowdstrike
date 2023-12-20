@@ -85,18 +85,22 @@ func resolveZTAs(ctx context.Context, c *client.Client, hostIds []string) (*mode
 		Ids:     hostIds,
 		Context: ctx,
 	})
-	if err != nil {
-		// TODO: differentiate between 404 and other kinds of error
-		c.Logger.Warn().Err(err).Msg("cannot get zta")
+
+	switch t := err.(type) {
+	case *zero_trust_assessment.GetAssessmentV1NotFound:
+		c.Logger.Warn().Msgf("No ZTA found = %s", t.Payload.Errors)
+		foundResults := &models.DomainAssessmentsResponse{}
 		rawData, err := falcon.ErrorExtractPayload(err).MarshalBinary()
 		if err != nil {
 			return nil, err
 		}
-		foundResults := &models.DomainAssessmentsResponse{}
 		if err := json.Unmarshal(rawData, foundResults); err != nil {
 			return nil, err
 		}
 		return foundResults, nil
+	case nil:
+		return ztaOK.GetPayload(), nil
+	default:
+		return nil, t
 	}
-	return ztaOK.GetPayload(), nil
 }
