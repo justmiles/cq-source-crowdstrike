@@ -3,11 +3,11 @@ package services
 import (
 	"context"
 	"encoding/json"
-	"time"
 
 	"github.com/cloudquery/plugin-sdk/v4/schema"
 	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/crowdstrike/gofalcon/falcon"
+	"github.com/crowdstrike/gofalcon/falcon/client/hosts"
 	"github.com/crowdstrike/gofalcon/falcon/client/zero_trust_assessment"
 	"github.com/crowdstrike/gofalcon/falcon/models"
 	"github.com/justmiles/cq-source-crowdstrike/client"
@@ -22,62 +22,42 @@ func ZTAs() *schema.Table {
 }
 
 func fetchZTAs(ctx context.Context, meta schema.ClientMeta, parent *schema.Resource, res chan<- any) error {
-
-	hostsChan := make(chan any)
-	defer close(hostsChan)
-
-	errChan := make(chan error)
-	defer close(errChan)
-	go func() {
-		errChan <- fetchHosts(ctx, meta, parent, hostsChan)
-	}()
-
 	c := meta.(*client.Client)
-	for batch := range batchedHosts(hostsChan, 100, 5*time.Second) {
-		result, err := resolveZTAs(ctx, c, batch)
+
+	var offset int64 = 0
+	var limit int64 = 100
+
+	for {
+		queryOk, err := c.CrowdStrike.Hosts.QueryDevicesByFilter(&hosts.QueryDevicesByFilterParams{
+			Context: ctx,
+			Limit:   &limit,
+			Offset:  &offset,
+		})
 		if err != nil {
 			return err
 		}
-		for _, zta := range result.Resources {
+
+		queryResponse := queryOk.GetPayload()
+		if err := falcon.AssertNoError(queryResponse.Errors); err != nil {
+			return err
+		}
+
+		ztas, err := resolveZTAs(ctx, c, queryResponse.Resources)
+		if err != nil {
+			return err
+		}
+		for _, zta := range ztas.Resources {
 			res <- zta
+		}
+
+		offset += limit
+
+		if *queryResponse.Meta.Pagination.Total == int64(*queryResponse.Meta.Pagination.Offset) {
+			break
 		}
 	}
 
-	return <-errChan
-}
-
-func batchedHosts(hosts <-chan any, maxBatchSize int, maxTimeout time.Duration) chan []string {
-	batches := make(chan []string)
-
-	go func() {
-		defer close(batches)
-
-		for keepGoing := true; keepGoing; {
-			var batch []string
-			expire := time.After(maxTimeout)
-			for {
-				select {
-				case host, ok := <-hosts:
-					if !ok {
-						keepGoing = false
-						goto done
-					}
-					batch = append(batch, *host.(*models.DeviceapiDeviceSwagger).DeviceID)
-					if len(batch) == maxBatchSize {
-						goto done
-					}
-				case <-expire:
-					return
-				}
-			}
-		done:
-			if len(batch) > 0 {
-				batches <- batch
-			}
-		}
-	}()
-
-	return batches
+	return nil
 }
 
 func resolveZTAs(ctx context.Context, c *client.Client, hostIds []string) (*models.DomainAssessmentsResponse, error) {
