@@ -1,6 +1,7 @@
 before:
   hooks:
     - go mod download
+    - go run main.go package -m "Release v{{ .Version }}" v{{ .Version }} .
 builds:
   - flags:
       - -buildmode=exe
@@ -30,6 +31,7 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
-
+dist: dist/goreleaser
 release:
   prerelease: auto
+
