@@ -143,7 +143,7 @@ func getTables() schema.Tables {
 		services.Vulnerabilities(),
 		services.DiscoverApps(),
 		services.DiscoverHosts(),
-		services.ZTAs(),
+    services.ZTAs(),
 	}
 	if err := transformers.TransformTables(tables); err != nil {
 		panic(err)
