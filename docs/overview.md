@@ -1,8 +1,4 @@
-# CloudQuery CrowdStrike Falcon Source Plugin
-
-[![release](https://github.com/justmiles/cq-source-crowdstrike/actions/workflows/release.yaml/badge.svg)](https://github.com/justmiles/cq-source-crowdstrike/actions/workflows/release.yaml) [![test](https://github.com/justmiles/cq-source-crowdstrike/actions/workflows/test.yaml/badge.svg)](https://github.com/justmiles/cq-source-crowdstrike/actions/workflows/test.yaml)
-
-A crowdstrike source plugin for CloudQuery Falcon that loads data from crowdstrike to any database, data warehouse or data lake supported by [CloudQuery](https://www.cloudquery.io/), such as PostgreSQL, BigQuery, Athena, and many more.
+A crowdstrike source plugin for CloudQuery Falcon that loads data from crowdstrike to any database, data warehouse or data lake supported by CloudQuery, such as PostgreSQL, BigQuery, Athena, and many more.
 
 ## Features
 
@@ -61,7 +57,7 @@ CloudQuery should only have _read_ access to CrowdStrike resources. The intent i
 kind: source
 spec:
   name: "crowdstrike"
-  registry: "github"
+  registry: "cloudquery"
   path: "justmiles/crowdstrike"
   version: "v2.0.0"
   # use this to enable incremental syncing - unimplemented
@@ -78,15 +74,6 @@ spec:
 
 - `concurrency` (int, optional, default: `1000`):
   Best effort maximum number of Go routines to use. Lower this number to reduce memory usage.
-
-## Tables
-
-- [crowdstrike_falcon_detections](./docs/tables/crowdstrike_falcon_detections.md)
-- [crowdstrike_falcon_hosts](./docs/tables/crowdstrike_falcon_hosts.md)
-- [crowdstrike_falcon_incidents](./docs/tables/crowdstrike_falcon_incidents.md)
-- [crowdstrike_falcon_vulnerabilities](./docs/tables/crowdstrike_falcon_vulnerabilities.md)
-- [crowdstrike_falcon_discover_hosts](./docs/tables/crowdstrike_falcon_discover_hosts.md)
-- [crowdstrike_falcon_discover_applications](./docs/tables/crowdstrike_falcon_discover_applications.md)
 
 ## Development
 
@@ -132,4 +119,4 @@ cloudquery plugin publish --finalize
 
 After publishing the new version, it will show up in the [hub](https://hub.cloudquery.io/).
 
-For more information please refer to the official [Publishing a Plugin to the Hub](https://www.cloudquery.io/docs/developers/publishing-a-plugin-to-the-hub) guide.
+For more information please refer to the official [Publishing a Plugin to the Hub](https://cloudquery.io/docs/developers/publishing-a-plugin-to-the-hub) guide.

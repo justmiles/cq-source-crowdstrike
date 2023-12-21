@@ -1,4 +1,4 @@
-package resources
+package services
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/justmiles/cq-source-crowdstrike/client"
 
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/crowdstrike/gofalcon/falcon/client/hosts"
 	"github.com/crowdstrike/gofalcon/falcon/models"
 )

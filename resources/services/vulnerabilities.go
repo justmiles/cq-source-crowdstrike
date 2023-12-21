@@ -1,4 +1,4 @@
-package resources
+package services
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 
 	"github.com/justmiles/cq-source-crowdstrike/client"
 
-	"github.com/cloudquery/plugin-sdk/v3/schema"
-	"github.com/cloudquery/plugin-sdk/v3/transformers"
+	"github.com/cloudquery/plugin-sdk/v4/schema"
+	"github.com/cloudquery/plugin-sdk/v4/transformers"
 	"github.com/crowdstrike/gofalcon/falcon"
 	"github.com/crowdstrike/gofalcon/falcon/client/spotlight_vulnerabilities"
 	"github.com/crowdstrike/gofalcon/falcon/models"
@@ -26,7 +26,6 @@ func fetchVulnerabilities(ctx context.Context, meta schema.ClientMeta, parent *s
 
 	lastSeen := (*string)(nil)
 	for {
-
 		queryRespOK, err := c.CrowdStrike.SpotlightVulnerabilities.CombinedQueryVulnerabilities(&spotlight_vulnerabilities.CombinedQueryVulnerabilitiesParams{
 			Context: ctx,
 			Facet:   []string{"cve", "host_info", "remediation"},

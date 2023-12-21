@@ -25,7 +25,9 @@ dist
 config.yaml
 .cq
 .vscode
+.idea
 db.sql
+cloudquery
 cloudquery.log
 postgres.yaml
 .envrc
